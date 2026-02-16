@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Assistant MCP · AI‑Powered</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Monaco Editor -->
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header with user dropdown -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <i class="fas fa-code"></i>
+                    <span>Code Assistant MCP</span>
+                </div>
+                <div class="header-right">
+                    <span class="version">v2.0</span>
+                    <div class="user-menu">
+                        <button class="user-btn" id="user-menu-btn">
+                            <i class="fas fa-user-circle"></i> {{ username }}
+                        </button>
+                        <div class="user-dropdown" id="user-dropdown">
+                            <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Top Navigation -->
+        <nav class="navbar">
+            <div class="nav-actions">
+                <button id="btn-files" class="nav-btn" title="Browse files"><i class="fas fa-folder-open"></i><span>Files</span></button>
+                <button id="btn-search" class="nav-btn" title="Search code"><i class="fas fa-search"></i><span>Search</span></button>
+                <button id="btn-tests" class="nav-btn" title="Run tests"><i class="fas fa-vial"></i><span>Tests</span></button>
+                <button id="btn-analyze" class="nav-btn" title="Static analysis"><i class="fas fa-chart-line"></i><span>Analyze</span></button>
+                <button id="btn-context" class="nav-btn" title="Project context"><i class="fas fa-project-diagram"></i><span>Context</span></button>
+                <button id="btn-git" class="nav-btn" title="Git status"><i class="fab fa-git-alt"></i><span>Git</span></button>
+                <button id="btn-ai" class="nav-btn" title="AI suggestions"><i class="fas fa-robot"></i><span>AI Suggest</span></button>
+            </div>
+        </nav>
+
+        <!-- Main Work Area -->
+        <div class="workarea">
+            <!-- Sidebar: File Tree -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <i class="fas fa-tree"></i>
+                    <h3>Workspace</h3>
+                    <button id="upload-file" class="icon-btn" title="Upload file"><i class="fas fa-upload"></i></button>
+                    <button id="refresh-files" class="icon-btn" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+                </div>
+                <div class="file-tree" id="file-tree">
+                    <div class="loading">Loading...</div>
+                </div>
+            </aside>
+
+            <!-- Center: Editor + Preview -->
+            <section class="editor-panel">
+                <div class="editor-toolbar">
+                    <button id="toggle-preview" class="toolbar-btn" title="Toggle Preview">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                    <span class="file-status" id="file-status"></span>
+                </div>
+                <div class="editor-container" id="editor-container"></div>
+            </section>
+
+            <!-- Preview Panel (hidden by default) -->
+            <aside class="preview-panel" id="preview-panel">
+                <div class="preview-header">
+                    <i class="fas fa-eye"></i>
+                    <h3>Preview</h3>
+                    <button id="close-preview" class="icon-btn" title="Close Preview"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="preview-content" id="preview-content"></div>
+            </aside>
+
+            <!-- Right Panel: Messages / Output -->
+            <aside class="info-panel" id="info-panel">
+                <div class="info-header">
+                    <i class="fas fa-comment-dots"></i>
+                    <h3>Messages</h3>
+                    <button id="clear-messages" class="icon-btn" title="Clear all"><i class="fas fa-trash-alt"></i></button>
+                </div>
+                <div class="messages" id="messages">
+                    <div class="message system">
+                        <span class="msg-icon"><i class="fas fa-info-circle"></i></span>
+                        <div class="msg-content">Welcome to Code Assistant MCP. Select a file or run an action.</div>
+                        <span class="msg-time">just now</span>
+                    </div>
+                </div>
+                <!-- Chat input area -->
+                <div class="chat-input-area">
+                    <textarea id="chat-input" placeholder="Ask the AI assistant..." rows="2"></textarea>
+                    <button id="chat-send" class="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <span>&copy; 2025 Code Assistant MCP. All rights reserved.</span>
+                <span><i class="fas fa-code-branch"></i> v2.0.1</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Hidden file input for upload -->
+    <input type="file" id="file-upload-input" style="display: none;" multiple>
+
+    <!-- File preview tooltip (hover) -->
+    <div id="file-preview" class="file-preview">
+        <pre><code id="hover-preview-content"></code></pre>
+    </div>
+
+    <!-- Modal for user input -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Input</h3>
+                <button class="modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message"></p>
+                <input type="text" id="modal-input" placeholder="Enter value...">
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" id="modal-cancel">Cancel</button>
+                <button class="modal-btn confirm" id="modal-confirm">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login · Code Assistant MCP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-code"></i>
+                <h2>Code Assistant MCP</h2>
+                <p>Sign in to your account</p>
+            </div>
+            <form method="POST" action="/login" class="auth-form">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="auth-error">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="auth-btn">Login</button>
+            </form>
+            <p class="auth-link">Don't have an account? <a href="/signup">Sign up</a></p>
+        </div>
+    </div>
+</body>
+</html>
