@@ -1,6 +1,7 @@
 .venv
 venv
 __pycache__
-.next
 .git
-node_modules
+nltk_data
+.vercel
+.github
