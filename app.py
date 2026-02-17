@@ -1,4 +1,16 @@
 import os
+import nltk
+
+# Create a writeable directory for NLTK data in Vercel's /tmp
+nltk_data_dir = "/tmp/nltk_data"
+if not os.path.exists(nltk_data_dir):
+    os.makedirs(nltk_data_dir)
+
+# Tell NLTK to look in and download to this directory
+nltk.data.path.append(nltk_data_dir)
+nltk.download('punkt', download_dir=nltk_data_dir)
+nltk.download('punkt_tab', download_dir=nltk_data_dir) # Needed for 2026 LlamaIndex
+import os
 import logging
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_cors import CORS
