@@ -1,26 +1,14 @@
-# Core Web Server
-Flask==3.0.2
+Flask==3.1.2
 gunicorn==22.0.0
-Flask-CORS==4.0.1
+Flask-CORS==5.0.0
 python-dotenv==1.0.1
-requests==2.31.0
-
-# Database & Auth
+requests==2.32.3
 Flask-Login==0.6.3
 Flask-SQLAlchemy==3.1.1
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 pymysql==1.1.1
-email-validator==2.1.0.post1
-
-# AI & Project Context
+email-validator==2.2.0
 llama-index==0.10.12
 openai==1.14.0
-GitPython==3.1.43
+GitPython==3.1.44
 pathspec==0.12.1
-
-# Testing & Linting
-pytest==8.1.1
-pylint==3.1.0
-flake8==7.0.0
-mypy==1.9.0
-vercel-wsgi==0.6.0
